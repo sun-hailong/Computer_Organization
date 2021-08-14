@@ -1,0 +1,79 @@
+C语言代码：
+
+int A[10],B[10],C[10];
+int i;
+for(i=0;i<10;i++)
+{
+	A[i]=i;
+	B[i]=i+1;
+}
+for(i=0;i<10;i++)
+	C[i]=A[i]+B[i];
+
+汇编语言代码：
+addiu $s1,$0,0 #Address of Array A
+addiu $s2,$0,40 #Address of Array B
+addiu $s3,$0,80 #Address of Array C
+addiu $s4,$0,0 #i=0
+addiu $s5,$0,10 #N=10
+loop1: beq $s4,$s5,label1 #i?=N
+sll $s6,$s4,2 #i*4
+addu $t1,$s6,$s1 #Address of A[i]
+addu $t2,$s6,$s2 #Address of B[i]
+subu $t3,$s4,$0 #i
+addiu $t4,$s4,1 #i+1
+sw $t3,0($t1) #A[i]=i
+sw $t4,0($t2) #B[i]=i+1
+addiu $s4,$s4,1 #i=i+1
+j loop1
+
+label1: and $s4,$0,$0 #i=0
+or $s5,$0,$s5 #N=10
+loop2:slt $a1,$s4,$s5 #if i<N $a1=1 else $a1=0
+beq $a1,$0,end #$a1?=0
+sll $s6,$s4,2 #i*4
+addu $t1,$s1,$s6 #Address of A[i]
+addu $t2,$s2,$s6 #Address of B[i]
+addu $t3,$s3,$s6 #Address of C[i]
+lw $t4,0($t1) #$t4=A[i]
+lw $t5,0($t2) #$t5=B[i]
+addu $t6,$t4,$t5 #$t6=$t4+$t5
+sw $t6,0($t3) #C[i]=$t6
+addiu $s4,$s4,1 #i=i+1
+j loop2
+end: 
+
+机器码：
+24110000
+24120028
+24130050
+24140000
+2415000a
+12950009
+0014b080
+02d14821
+02d25021
+02805823
+268c0001
+ad2b0000
+ad4c0000
+26940001
+08100005
+0000a024
+0015a825
+0295282a
+10a0000a
+0014b080
+02364821
+02565021
+02765821
+8d2c0000
+8d4d0000
+018d7021
+ad6e0000
+26940001
+08100011
+
+
+
+
